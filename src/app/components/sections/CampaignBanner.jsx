@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 
 export function CampaignBanner() {
   return (
-    <section className="relative overflow-hidden" style={{ minHeight: "60vh" }}>
+    <section className="relative overflow-hidden mb-1" style={{ minHeight: "70vh" }}>
       <img
         src="https://images.unsplash.com/photo-1771012266254-9e58941dbb45?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZW5pbSUyMGplYW5zJTIwZmFzaGlvbiUyMGRhcmslMjBlZGl0b3JpYWx8ZW58MXx8fHwxNzc1MzA5MjI3fDA&ixlib=rb-4.1.0&q=80&w=1080"
         alt="Campaign"

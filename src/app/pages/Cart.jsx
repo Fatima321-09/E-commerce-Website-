@@ -96,7 +96,7 @@ export default function Cart() {
     <div style={{ backgroundColor: "#0a0a0a", minHeight: "100vh" }}>
       {/* Header */}
       <div
-        className="pt-36 pb-12 px-6 border-b border-[#1a1a1a]"
+        className="pt-24 pb-12 px-6 border-b border-[#1a1a1a]"
         style={{ backgroundColor: "#0f0f0f" }}
       >
         <div className="max-w-[1400px] mx-auto">

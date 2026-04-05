@@ -47,7 +47,7 @@ export function ShopByFit() {
               <Link
                 to={fit.href}
                 className="group block relative overflow-hidden"
-                style={{ aspectRatio: i === 0 || i === 3 ? "3/5" : "3/4" }}
+                style={{ aspectRatio: "3/5" }}
               >
                 <img
                   src={fit.image}

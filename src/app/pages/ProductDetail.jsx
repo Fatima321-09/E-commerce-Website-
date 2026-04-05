@@ -31,6 +31,12 @@ export default function ProductDetail() {
   const [addedToCart, setAddedToCart] = useState(false);
   const [activeGalleryImg, setActiveGalleryImg] = useState(0);
 
+  // Keep "Added to Cart" sticky for the current product page view.
+  // Reset only when user navigates to a different product.
+  useEffect(() => {
+    setAddedToCart(false);
+  }, [id]);
+
   const isJeans = product.waistSizes && product.waistSizes.length > 0;
   const waistSizes = product.waistSizes || [];
   const lengths = product.lengths || [];
@@ -71,7 +77,6 @@ export default function ProductDetail() {
     addToCart(product, size, qty);
 
     setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2000);
   };
 
   const discount = product.originalPrice
@@ -81,7 +86,7 @@ export default function ProductDetail() {
   return (
     <div style={{ backgroundColor: "#0a0a0a", minHeight: "100vh" }}>
       {/* Breadcrumb */}
-      <div className="pt-36 pb-4 px-6 border-b border-[#1a1a1a]">
+      <div className="pt-24 pb-4 px-6 border-b border-[#1a1a1a]">
         <div className="max-w-[1400px] mx-auto flex items-center gap-2 text-xs text-white/30 tracking-widest">
           <Link to="/" className="hover:text-white transition-colors">HOME</Link>
           <ChevronRight className="w-3 h-3" />
@@ -200,7 +205,7 @@ export default function ProductDetail() {
                     <button
                       key={i}
                       onClick={() => setSelectedColor(i)}
-                      className="w-8 h-8 rounded-full transition-all"
+                      className="w-8 h-8 rounded-full transition-all cursor-pointer"
                       style={{
                         backgroundColor: color,
                         boxShadow: selectedColor === i ? "0 0 0 2px #fff, 0 0 0 4px #e31837" : "none",
@@ -229,7 +234,7 @@ export default function ProductDetail() {
                         <button
                           key={w}
                           onClick={() => setSelectedWaist(w)}
-                          className="min-w-[52px] h-11 px-3 text-xs tracking-widest border transition-all"
+                          className="min-w-[52px] h-11 px-3 text-xs tracking-widest border transition-all cursor-pointer"
                           style={{
                             backgroundColor: selectedWaist === w ? "#ffffff" : "transparent",
                             color: selectedWaist === w ? "#0a0a0a" : "rgba(255,255,255,0.5)",
@@ -253,7 +258,7 @@ export default function ProductDetail() {
                         <button
                           key={l}
                           onClick={() => setSelectedLength(l)}
-                          className="min-w-[58px] h-11 px-4 text-xs tracking-widest border transition-all"
+                          className="min-w-[58px] h-11 px-4 text-xs tracking-widest border transition-all cursor-pointer"
                           style={{
                             backgroundColor: selectedLength === l ? "#ffffff" : "transparent",
                             color: selectedLength === l ? "#0a0a0a" : "rgba(255,255,255,0.5)",
@@ -288,7 +293,7 @@ export default function ProductDetail() {
                       <button
                         key={size}
                         onClick={() => setSelectedSize(i)}
-                        className="min-w-[52px] h-11 px-3 text-xs tracking-widest border transition-all"
+                        className="min-w-[52px] h-11 px-3 text-xs tracking-widest border transition-all cursor-pointer"
                         style={{
                           backgroundColor: selectedSize === i ? "#ffffff" : "transparent",
                           color: selectedSize === i ? "#0a0a0a" : "rgba(255,255,255,0.5)",
@@ -337,7 +342,7 @@ export default function ProductDetail() {
                 >
                   <button
                     onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="w-11 h-14 text-white/60 hover:text-white transition-colors text-lg"
+                    className="w-11 h-14 text-white/60 hover:text-white transition-colors text-lg cursor-pointer"
                   >
                     −
                   </button>
@@ -349,7 +354,7 @@ export default function ProductDetail() {
                   </span>
                   <button
                     onClick={() => setQty(qty + 1)}
-                    className="w-11 h-14 text-white/60 hover:text-white transition-colors text-lg"
+                    className="w-11 h-14 text-white/60 hover:text-white transition-colors text-lg cursor-pointer"
                   >
                     +
                   </button>
@@ -376,7 +381,7 @@ export default function ProductDetail() {
                 {/* Wishlist */}
                 <button
                   onClick={() => setIsWished(!isWished)}
-                  className="w-14 h-14 flex items-center justify-center border border-[#333] hover:border-white transition-colors"
+                  className="w-14 h-14 flex items-center justify-center border border-[#333] hover:border-white transition-colors cursor-pointer"
                   style={{ backgroundColor: "#111" }}
                 >
                   <Heart
@@ -428,7 +433,7 @@ export default function ProductDetail() {
                 <button
                   key={i}
                   onClick={() => setActiveGalleryImg(i)}
-                  className="relative overflow-hidden transition-all duration-200"
+                  className="relative overflow-hidden transition-all duration-200 cursor-pointer"
                   style={{
                     aspectRatio: "3/4",
                     backgroundColor: "#111",
@@ -449,12 +454,12 @@ export default function ProductDetail() {
             {/* Large model image */}
             <div
               className="overflow-hidden"
-              style={{ backgroundColor: "#111", aspectRatio: "4/3" }}
+              style={{ backgroundColor: "#111" }}
             >
               <img
                 src={activeGalleryImg < galleryImages.length ? galleryImages[activeGalleryImg] : modelImage}
                 alt="Model"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 style={{ filter: "brightness(0.85) contrast(1.05)" }}
               />
             </div>

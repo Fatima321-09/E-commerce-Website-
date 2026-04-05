@@ -21,7 +21,7 @@ export default function Checkout() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] min-h-screen pt-32 pb-20 px-6 text-white font-sans uppercase tracking-widest">
+    <div className="bg-[#0a0a0a] min-h-screen pt-24 pb-20 px-6 text-white font-sans uppercase tracking-widest">
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16">
         {/* LEFT SIDE: SHIPPING & PAYMENT */}
         <form onSubmit={handlePlaceOrder} className="space-y-8">
