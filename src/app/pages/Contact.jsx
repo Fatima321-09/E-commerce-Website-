@@ -73,7 +73,7 @@ export default function Contact() {
   return (
     <div style={{ backgroundColor: "#0a0a0a", minHeight: "100vh" }}>
       {/* Hero */}
-      <div className="relative pt-44 pb-24 px-6 overflow-hidden">
+      <div className="relative pt-28 pb-24 px-6 overflow-hidden">
         <div
           className="absolute inset-0"
           style={{

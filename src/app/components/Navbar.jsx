@@ -41,14 +41,40 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
     setActiveDropdown(null);
+    setSearchOpen(false);
   }, [location]);
+
+  const isActive = (href) => {
+    const path = location.pathname;
+    if (href === "/") return path === "/";
+    if (href === "/cart") return path === "/cart";
+    // For shop pages, check exact match for specific categories
+    if (href === "/shop") {
+      return path === "/shop" || path === "/shop/";
+    }
+    if (href === "/shop/collections") {
+      return path.startsWith("/shop/collections");
+    }
+    if (href === "/shop/sale") {
+      return path.startsWith("/shop/sale");
+    }
+    if (href === "/shop/men") {
+      return path.startsWith("/shop/men");
+    }
+    if (href === "/shop/women") {
+      return path.startsWith("/shop/women");
+    }
+    return path.startsWith(href);
+  };
 
   return (
     <>
       {/* Announcement bar */}
       <div
         style={{ backgroundColor: "#e31837" }}
-        className="text-white text-center py-2 text-xs tracking-widest uppercase"
+        className={`text-white text-center py-2 text-xs tracking-widest uppercase transition-all duration-300 overflow-hidden ${
+          scrolled ? "h-0 py-0" : "h-auto"
+        }`}
       >
         Free shipping on orders over $150 &nbsp;|&nbsp; New arrivals every week
       </div>
@@ -57,10 +83,9 @@ export default function Navbar() {
       <header
         className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#222]"
-            : "bg-transparent"
+            ? "bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#222] top-0"
+            : "bg-transparent top-[28px]"
         }`}
-        style={{ top: "28px" }}
       >
         <div className="max-w-[1400px] mx-auto px-6 flex items-center justify-between h-16">
           {/* Logo */}
@@ -86,7 +111,11 @@ export default function Navbar() {
               >
                 <Link
                   to={link.href}
-                  className="flex items-center gap-1 text-white/80 hover:text-white transition-colors tracking-widest text-xs"
+                  className={`flex items-center gap-1 transition-colors tracking-widest text-xs ${
+                    isActive(link.href)
+                      ? "text-[#e31837]"
+                      : "text-white/80 hover:text-white"
+                  }`}
                   style={{ fontWeight: 700 }}
                 >
                   {link.label}
@@ -96,19 +125,25 @@ export default function Navbar() {
                 {/* Dropdown */}
                 {link.sub.length > 0 && activeDropdown === link.label && (
                   <div
-                    className="absolute top-full left-0 mt-2 py-4 px-6 min-w-[180px] border border-[#222] z-50"
-                    style={{ backgroundColor: "#111111" }}
+                    className="absolute top-full left-0 pt-2 z-50"
+                    onMouseEnter={() => setActiveDropdown(link.label)}
+                    onMouseLeave={() => setActiveDropdown(null)}
                   >
-                    {link.sub.map((item) => (
-                      <Link
-                        key={item}
-                        to={link.href}
-                        className="block py-2 text-white/60 hover:text-white text-xs tracking-widest transition-colors"
-                        style={{ fontWeight: 500 }}
-                      >
-                        {item.toUpperCase()}
-                      </Link>
-                    ))}
+                    <div
+                      className="py-4 px-6 min-w-[180px] border border-[#222]"
+                      style={{ backgroundColor: "#111111" }}
+                    >
+                      {link.sub.map((item) => (
+                        <Link
+                          key={item}
+                          to={link.href}
+                          className="block py-2 text-white/60 hover:text-white text-xs tracking-widest transition-colors"
+                          style={{ fontWeight: 500 }}
+                        >
+                          {item.toUpperCase()}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -164,12 +199,12 @@ export default function Navbar() {
 
         {/* Search bar */}
         {searchOpen && (
-          <div
-            className="border-t border-[#222] px-6 py-4"
-            style={{ backgroundColor: "#111111" }}
-          >
-            <div className="max-w-[600px] mx-auto flex items-center gap-3">
-              <Search className="w-4 h-4 text-white/40" />
+          <div className="px-6 py-4">
+            <div
+              className="max-w-[600px] mx-auto flex items-center gap-3 px-5 py-3 rounded-lg border border-[#333]"
+              style={{ backgroundColor: "rgba(10,10,10,0.95)" }}
+            >
+              <Search className="w-4 h-4 text-white/40 shrink-0" />
               <input
                 type="text"
                 aria-label="Search the archive"
@@ -179,7 +214,7 @@ export default function Navbar() {
               />
               <button
                 onClick={() => setSearchOpen(false)}
-                className="text-white/40 hover:text-white"
+                className="text-white/40 hover:text-white shrink-0"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -191,14 +226,18 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 flex flex-col pt-32 px-6"
+          className={`fixed inset-0 z-40 flex flex-col px-6 transition-all duration-300 ${
+            scrolled ? "pt-24" : "pt-32"
+          }`}
           style={{ backgroundColor: "#0a0a0a" }}
         >
           {navLinks.map((link) => (
             <Link
               key={link.label}
               to={link.href}
-              className="py-4 text-white border-b border-[#1a1a1a] tracking-widest text-sm"
+              className={`py-4 border-b border-[#1a1a1a] tracking-widest text-sm ${
+                isActive(link.href) ? "text-[#e31837]" : "text-white"
+              }`}
               style={{ fontWeight: 700 }}
             >
               {link.label}
@@ -206,7 +245,9 @@ export default function Navbar() {
           ))}
           <Link
             to="/cart"
-            className="py-4 text-white border-b border-[#1a1a1a] tracking-widest text-sm flex items-center gap-2"
+            className={`py-4 border-b border-[#1a1a1a] tracking-widest text-sm flex items-center gap-2 ${
+              isActive("/cart") ? "text-[#e31837]" : "text-white"
+            }`}
             style={{ fontWeight: 700 }}
           >
             CART

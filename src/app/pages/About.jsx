@@ -38,21 +38,38 @@ export default function About() {
   return (
     <div style={{ backgroundColor: "#0a0a0a", minHeight: "100vh" }}>
       {/* Hero */}
-      <section className="relative pt-44 pb-0 overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-6">
+      <section className="relative overflow-hidden" style={{ minHeight: "80vh" }}>
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1770795945741-80b6f482f812?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyYXclMjBkZW5pbSUyMHN0cmVldHdlYXIlMjBtb2RlbCUyMGRhcmslMjBiYWNrZ3JvdW5kfGVufDF8fHx8MTc3NTMwOTIzMHww&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="About"
+            className="w-full h-full object-cover"
+            style={{ filter: "brightness(0.4) contrast(1.2) saturate(0.7)" }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.7) 60%, rgba(10,10,10,1) 100%)",
+            }}
+          />
+        </div>
+
+        {/* Text Content */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 flex items-center" style={{ minHeight: "80vh" }}>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
             <p
-              className="text-white/30 text-xs tracking-[0.4em] uppercase mb-4"
+              className="text-white/50 text-xs tracking-[0.4em] uppercase mb-4"
               style={{ fontWeight: 600 }}
             >
               Since 1984
             </p>
             <h1
-              className="text-white uppercase mb-0"
+              className="text-white uppercase"
               style={{
                 fontSize: "clamp(3rem, 10vw, 9rem)",
                 fontWeight: 900,
@@ -65,22 +82,6 @@ export default function About() {
               <span style={{ color: "#e31837" }}>IN DENIM.</span>
             </h1>
           </motion.div>
-        </div>
-
-        {/* Full-width image */}
-        <div className="mt-16 relative w-full overflow-hidden" style={{ height: "60vh" }}>
-          <img
-            src="https://images.unsplash.com/photo-1770795945741-80b6f482f812?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyYXclMjBkZW5pbSUyMHN0cmVldHdlYXIlMjBtb2RlbCUyMGRhcmslMjBiYWNrZ3JvdW5kfGVufDF8fHx8MTc3NTMwOTIzMHww&ixlib=rb-4.1.0&q=80&w=1080"
-            alt="About"
-            className="w-full h-full object-cover"
-            style={{ filter: "brightness(0.5) contrast(1.2) saturate(0.7)" }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(to bottom, rgba(10,10,10,0.5) 0%, rgba(10,10,10,1) 100%)",
-            }}
-          />
         </div>
       </section>
 

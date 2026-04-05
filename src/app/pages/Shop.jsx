@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { SlidersHorizontal, ChevronDown, X, Grid3X3, LayoutList } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { products } from "../data/products";
@@ -13,6 +13,7 @@ const priceRanges = ["Under $100", "$100–$150", "$150–$200", "$200+"];
 
 export default function Shop() {
   const { category } = useParams();
+  const navigate = useNavigate();
   const [sort, setSort] = useState("Featured");
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -21,6 +22,32 @@ export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPrices, setSelectedPrices] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
+
+  // Set gender filter based on URL category param and navigate when changed
+  useEffect(() => {
+    if (category === "men") {
+      setSelectedGender("Men");
+    } else if (category === "women") {
+      setSelectedGender("Women");
+    } else {
+      setSelectedGender("All");
+    }
+  }, [category]);
+
+  const handleGenderChange = (g) => {
+    if (g === "Men") {
+      navigate("/shop/men");
+    } else if (g === "Women") {
+      navigate("/shop/women");
+    } else {
+      // When clicking "All", go to collections (or stay on sale if already there)
+      if (category === "sale") {
+        navigate("/shop/sale");
+      } else {
+        navigate("/shop/collections");
+      }
+    }
+  };
 
   const categoryTitle = category
     ? category.charAt(0).toUpperCase() + category.slice(1)
@@ -55,7 +82,7 @@ export default function Shop() {
     <div style={{ backgroundColor: "#0a0a0a", minHeight: "100vh" }}>
       {/* Page Header */}
       <div
-        className="relative pt-44 pb-16 px-6 border-b border-[#1a1a1a]"
+        className="relative pt-28 pb-16 px-6 border-b border-[#1a1a1a]"
         style={{ backgroundColor: "#0f0f0f" }}
       >
         <div className="max-w-[1400px] mx-auto">
@@ -101,8 +128,8 @@ export default function Shop() {
               {genderFilters.map((g) => (
                 <button
                   key={g}
-                  onClick={() => setSelectedGender(g)}
-                  className="px-5 py-3 text-xs tracking-widest transition-all"
+                  onClick={() => handleGenderChange(g)}
+                  className="px-5 py-3 text-xs tracking-widest transition-all cursor-pointer"
                   style={{
                     backgroundColor: selectedGender === g ? "#ffffff" : "transparent",
                     color: selectedGender === g ? "#0a0a0a" : "rgba(255,255,255,0.5)",
@@ -257,12 +284,12 @@ export default function Shop() {
                   {activeFilterCount > 0 && (
                     <button
                       onClick={() => {
-                        setSelectedGender("All");
+                        handleGenderChange("All");
                         setSelectedFit("All Fits");
                         setSelectedCategory("All");
                         setSelectedPrices([]);
                       }}
-                      className="w-full py-3 text-xs tracking-widest border border-[#333] text-white/40 hover:text-white hover:border-white transition-all"
+                      className="w-full py-3 text-xs tracking-widest border border-[#333] text-white/40 hover:text-white hover:border-white transition-all cursor-pointer"
                       style={{ fontWeight: 700 }}
                     >
                       CLEAR ALL FILTERS

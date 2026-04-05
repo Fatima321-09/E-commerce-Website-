@@ -55,7 +55,7 @@ export function HeroSection() {
       />
 
       {/* Hero Content */}
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 w-full pt-28">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 w-full pt-28 pb-36">
         <div className="max-w-3xl">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
