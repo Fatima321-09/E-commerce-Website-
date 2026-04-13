@@ -4,20 +4,20 @@ import { MapPin, Phone, Mail, Clock, Instagram, Twitter, Youtube, ArrowRight, Ch
 
 const stores = [
   {
-    city: "NEW YORK",
-    address: "212 SoHo Blvd, New York, NY 10013",
+    city: "Lahore",
+    address: "Allama Iqbal Town, Lahore, LHR 10013",
     phone: "+1 212 555 0198",
     hours: "Mon–Sat: 10am–8pm | Sun: 11am–6pm",
   },
   {
-    city: "LOS ANGELES",
-    address: "840 Melrose Ave, Los Angeles, CA 90046",
+    city: "Islamabad",
+    address: "G-9 Markez(Karachi Company), Islamabad, ISL 90046",
     phone: "+1 323 555 0174",
     hours: "Mon–Sat: 10am–8pm | Sun: 12pm–6pm",
   },
   {
-    city: "LONDON",
-    address: "55 Carnaby St, London W1F 9QU",
+    city: "Karachi",
+    address: "Zainab Market Saddar, 125 Abdullah Haroon Rd",
     phone: "+44 20 7946 0958",
     hours: "Mon–Sat: 10am–7pm | Sun: 12pm–5pm",
   },
@@ -307,8 +307,8 @@ export default function Contact() {
               </p>
               <div className="space-y-5">
                 {[
-                  { icon: Mail, label: "EMAIL", value: "hello@denimhub.com" },
-                  { icon: Phone, label: "PHONE", value: "+1 800 DENIM HUB" },
+                  { icon: Mail, label: "EMAIL", value: "abc@denimhub.com" },
+                  { icon: Phone, label: "PHONE", value: "+92 0000000" },
                   {
                     icon: Clock,
                     label: "RESPONSE TIME",
