@@ -15,7 +15,7 @@ const values = [
   {
     title: "CRAFT FIRST",
     description:
-      "Every pair starts with the finest raw materials sourced from Japanese and American mills. No shortcuts. Ever.",
+      "Every pair starts with the finest export materials sourced from Japanese and American mills. No shortcuts. Ever.",
   },
   {
     title: "BUILT TO LAST",
