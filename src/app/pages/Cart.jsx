@@ -182,7 +182,7 @@ export default function Cart() {
               <AnimatePresence>
                 {cartItems.map((item) => (
                   <motion.div
-                    key={`${item.product.id}-${item.size}`}
+                    key={`${item.product._id || item.product.id}-${item.size}`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20, height: 0 }}
@@ -191,7 +191,7 @@ export default function Cart() {
                   >
                     {/* Product info */}
                     <div className="flex gap-5 items-start">
-                      <Link to={`/product/${item.product.id}`}>
+                      <Link to={`/product/${item.product._id || item.product.id}`}>
                         <div
                           className="w-20 h-24 overflow-hidden shrink-0"
                           style={{ backgroundColor: "#111" }}
@@ -210,7 +210,7 @@ export default function Cart() {
                         >
                           {item.product.fit} FIT
                         </p>
-                        <Link to={`/product/${item.product.id}`}>
+                        <Link to={`/product/${item.product._id || item.product.id}`}>
                           <h3
                             className="text-white text-sm hover:text-white/70 transition-colors"
                             style={{ fontWeight: 700 }}
@@ -258,7 +258,7 @@ export default function Cart() {
                         <button
                           onClick={() =>
                             updateQuantity(
-                              item.product.id,
+                              item.product._id || item.product.id,
                               item.size,
                               item.quantity - 1,
                             )
@@ -276,7 +276,7 @@ export default function Cart() {
                         <button
                           onClick={() =>
                             updateQuantity(
-                              item.product.id,
+                              item.product._id || item.product.id,
                               item.size,
                               item.quantity + 1,
                             )
@@ -290,7 +290,7 @@ export default function Cart() {
 
                     {/* Remove */}
                     <button
-                      onClick={() => removeFromCart(item.product.id, item.size)}
+                      onClick={() => removeFromCart(item.product._id || item.product.id, item.size)}
                       className="text-white/20 hover:text-white/80 transition-colors justify-self-end"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -303,7 +303,7 @@ export default function Cart() {
               <div className="mt-4 hidden md:block">
                 {cartItems.map((item) => (
                   <div
-                    key={`${item.product.id}-${item.size}-price`}
+                    key={`${item.product._id || item.product.id}-${item.size}-price`}
                     className="flex justify-between items-center py-2 text-xs text-white/30 tracking-wide"
                   >
                     <span>

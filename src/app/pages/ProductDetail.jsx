@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { products } from "../data/products";
 import { ProductCard } from "../components/ProductCard";
 import { useCart } from "../context/CartContext";
+import { fetchProducts } from "../../api/productAp";
 
 export default function ProductDetail() {
   useEffect(() => {
@@ -18,9 +19,27 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const [catalogProducts, setCatalogProducts] = useState([]);
 
-  const product = products.find((p) => p.id === id) || products[0];
-  const related = products.filter((p) => p.id !== product.id).slice(0, 4);
+  useEffect(() => {
+    const getItems = async () => {
+      try {
+        const { data } = await fetchProducts();
+        setCatalogProducts(data || []);
+      } catch (error) {
+        console.error("Failed to load product detail catalog", error);
+      }
+    };
+
+    getItems();
+  }, []);
+  const sourceProducts = catalogProducts.length ? catalogProducts : products;
+  const product =
+    sourceProducts.find((p) => String(p._id || p.id) === String(id)) ||
+    sourceProducts[0];
+  const related = sourceProducts
+    .filter((p) => String(p._id || p.id) !== String(product?._id || product?.id))
+    .slice(0, 4);
 
   const [selectedWaist, setSelectedWaist] = useState(null);
   const [selectedLength, setSelectedLength] = useState(null);
@@ -44,12 +63,11 @@ export default function ProductDetail() {
   // Use product images (reuse with subtle variation for demo)
   const galleryImages = [
     product.image,
-    products[(parseInt(product.id) + 1) % products.length]?.image || product.image,
-    products[(parseInt(product.id) + 2) % products.length]?.image || product.image,
+    related[0]?.image || product.image,
+    related[1]?.image || product.image,
   ];
 
-  const modelImage =
-    products[(parseInt(product.id) + 3) % products.length]?.image || product.image;
+  const modelImage = related[2]?.image || related[0]?.image || product.image;
 
   const specs = product.specs || {
     fabricWeight: "12 OZ",
@@ -571,7 +589,7 @@ export default function ProductDetail() {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p._id || p.id} product={p} />
             ))}
           </div>
         </div>

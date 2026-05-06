@@ -1,13 +1,34 @@
 import { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { SlidersHorizontal, ChevronDown, X, Grid3X3, LayoutList } from "lucide-react";
+import {
+  SlidersHorizontal,
+  ChevronDown,
+  X,
+  Grid3X3,
+  LayoutList,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { products } from "../data/products";
 import { ProductCard } from "../components/ProductCard";
+import { fetchProducts } from "../../api/productAp";
 
-const sortOptions = ["Featured", "Price: Low to High", "Price: High to Low", "Newest", "Best Selling"];
+const sortOptions = [
+  "Featured",
+  "Price: Low to High",
+  "Price: High to Low",
+  "Newest",
+  "Best Selling",
+];
 const genderFilters = ["All", "Men", "Women"];
-const fitFilters = ["All Fits", "Slim", "Straight", "Relaxed", "Skinny", "Wide", "Regular", "Oversized"];
+const fitFilters = [
+  "All Fits",
+  "Slim",
+  "Straight",
+  "Relaxed",
+  "Skinny",
+  "Wide",
+  "Regular",
+  "Oversized",
+];
 const categoryFilters = ["All", "Jeans", "Jackets", "Tops", "Accessories"];
 const priceRanges = ["Under $100", "$100–$150", "$150–$200", "$200+"];
 
@@ -22,8 +43,24 @@ export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPrices, setSelectedPrices] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Set gender filter based on URL category param and navigate when changed
+  useEffect(() => {
+    const getItems = async () => {
+      try {
+        const { data } = await fetchProducts();
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to load products", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getItems();
+  }, []);
+
+  // ✅ MOVED: this useEffect is now before any return
   useEffect(() => {
     if (category === "men") {
       setSelectedGender("Men");
@@ -40,7 +77,6 @@ export default function Shop() {
     } else if (g === "Women") {
       navigate("/shop/women");
     } else {
-      // When clicking "All", go to collections (or stay on sale if already there)
       if (category === "sale") {
         navigate("/shop/sale");
       } else {
@@ -56,20 +92,32 @@ export default function Shop() {
   const filtered = useMemo(() => {
     let result = [...products];
     if (selectedGender !== "All") {
-      result = result.filter((p) => p.gender === selectedGender.toLowerCase());
+      result = result.filter(
+        (p) =>
+          String(p.gender || "").toLowerCase() ===
+          String(selectedGender || "").toLowerCase(),
+      );
     }
     if (selectedFit !== "All Fits") {
-      result = result.filter((p) => p.fit === selectedFit);
+      result = result.filter(
+        (p) =>
+          String(p.fit || "").toLowerCase() ===
+          String(selectedFit || "").toLowerCase(),
+      );
     }
     if (selectedCategory !== "All") {
-      result = result.filter((p) => p.category === selectedCategory.toLowerCase());
+      result = result.filter(
+        (p) =>
+          String(p.category || "").toLowerCase() ===
+          String(selectedCategory || "").toLowerCase(),
+      );
     }
     if (sort === "Price: Low to High") result.sort((a, b) => a.price - b.price);
     if (sort === "Price: High to Low") result.sort((a, b) => b.price - a.price);
     if (sort === "Newest") result.sort((a) => (a.isNew ? -1 : 1));
     if (sort === "Best Selling") result.sort((a, b) => b.reviews - a.reviews);
     return result;
-  }, [selectedGender, selectedFit, selectedCategory, sort]);
+  }, [selectedGender, selectedFit, selectedCategory, sort, products]);
 
   const activeFilterCount = [
     selectedGender !== "All" ? 1 : 0,
@@ -77,6 +125,14 @@ export default function Shop() {
     selectedCategory !== "All" ? 1 : 0,
     selectedPrices.length,
   ].reduce((a, b) => a + b, 0);
+
+  // ✅ loading check AFTER all hooks
+  if (loading)
+    return (
+      <div className="bg-black text-white h-screen flex items-center justify-center">
+        INITIALIZING CATALOG...
+      </div>
+    );
 
   return (
     <div style={{ backgroundColor: "#0a0a0a", minHeight: "100vh" }}>
@@ -86,7 +142,10 @@ export default function Shop() {
         style={{ backgroundColor: "#0f0f0f" }}
       >
         <div className="max-w-[1400px] mx-auto">
-          <p className="text-white/30 text-xs tracking-[0.4em] uppercase mb-3" style={{ fontWeight: 600 }}>
+          <p
+            className="text-white/30 text-xs tracking-[0.4em] uppercase mb-3"
+            style={{ fontWeight: 600 }}
+          >
             Shop
           </p>
           <h1
@@ -99,7 +158,9 @@ export default function Shop() {
           >
             {categoryTitle}
           </h1>
-          <p className="text-white/30 text-sm mt-4">{filtered.length} products</p>
+          <p className="text-white/30 text-sm mt-4">
+            {filtered.length} products
+          </p>
         </div>
       </div>
 
@@ -118,7 +179,11 @@ export default function Shop() {
               {activeFilterCount > 0 && (
                 <span
                   className="text-white flex items-center justify-center rounded-full w-4 h-4"
-                  style={{ backgroundColor: "#e31837", fontSize: "10px", fontWeight: 700 }}
+                  style={{
+                    backgroundColor: "#e31837",
+                    fontSize: "10px",
+                    fontWeight: 700,
+                  }}
                 >
                   {activeFilterCount}
                 </span>
@@ -131,8 +196,12 @@ export default function Shop() {
                   onClick={() => handleGenderChange(g)}
                   className="px-5 py-3 text-xs tracking-widest transition-all cursor-pointer"
                   style={{
-                    backgroundColor: selectedGender === g ? "#ffffff" : "transparent",
-                    color: selectedGender === g ? "#0a0a0a" : "rgba(255,255,255,0.5)",
+                    backgroundColor:
+                      selectedGender === g ? "#ffffff" : "transparent",
+                    color:
+                      selectedGender === g
+                        ? "#0a0a0a"
+                        : "rgba(255,255,255,0.5)",
                     fontWeight: 700,
                   }}
                 >
@@ -163,8 +232,11 @@ export default function Shop() {
                 className="flex items-center gap-2 text-white text-xs tracking-widest border border-[#333] px-5 py-3 hover:border-white transition-colors min-w-[180px] justify-between"
                 style={{ fontWeight: 700 }}
               >
-                <span className="text-white/40">SORT:</span> {sort.toUpperCase()}
-                <ChevronDown className={`w-3 h-3 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
+                <span className="text-white/40">SORT:</span>{" "}
+                {sort.toUpperCase()}
+                <ChevronDown
+                  className={`w-3 h-3 transition-transform ${sortOpen ? "rotate-180" : ""}`}
+                />
               </button>
               {sortOpen && (
                 <div
@@ -174,10 +246,14 @@ export default function Shop() {
                   {sortOptions.map((opt) => (
                     <button
                       key={opt}
-                      onClick={() => { setSort(opt); setSortOpen(false); }}
+                      onClick={() => {
+                        setSort(opt);
+                        setSortOpen(false);
+                      }}
                       className="w-full text-left px-5 py-3 text-xs tracking-widest hover:bg-[#1a1a1a] transition-colors"
                       style={{
-                        color: sort === opt ? "#ffffff" : "rgba(255,255,255,0.4)",
+                        color:
+                          sort === opt ? "#ffffff" : "rgba(255,255,255,0.4)",
                         fontWeight: sort === opt ? 700 : 500,
                       }}
                     >
@@ -203,15 +279,27 @@ export default function Shop() {
               >
                 <div style={{ width: 260 }}>
                   <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-white text-xs tracking-widest" style={{ fontWeight: 700 }}>FILTERS</h3>
-                    <button onClick={() => setFilterOpen(false)} className="text-white/40 hover:text-white">
+                    <h3
+                      className="text-white text-xs tracking-widest"
+                      style={{ fontWeight: 700 }}
+                    >
+                      FILTERS
+                    </h3>
+                    <button
+                      onClick={() => setFilterOpen(false)}
+                      className="text-white/40 hover:text-white"
+                    >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
 
-                  {/* Fit Filter */}
                   <div className="mb-8 pb-8 border-b border-[#1a1a1a]">
-                    <h4 className="text-white/60 text-xs tracking-widest uppercase mb-4" style={{ fontWeight: 600 }}>Fit</h4>
+                    <h4
+                      className="text-white/60 text-xs tracking-widest uppercase mb-4"
+                      style={{ fontWeight: 600 }}
+                    >
+                      Fit
+                    </h4>
                     <div className="flex flex-wrap gap-2">
                       {fitFilters.map((fit) => (
                         <button
@@ -219,9 +307,14 @@ export default function Shop() {
                           onClick={() => setSelectedFit(fit)}
                           className="px-4 py-2 text-xs tracking-widest border transition-all"
                           style={{
-                            backgroundColor: selectedFit === fit ? "#ffffff" : "transparent",
-                            color: selectedFit === fit ? "#0a0a0a" : "rgba(255,255,255,0.4)",
-                            borderColor: selectedFit === fit ? "#ffffff" : "#333",
+                            backgroundColor:
+                              selectedFit === fit ? "#ffffff" : "transparent",
+                            color:
+                              selectedFit === fit
+                                ? "#0a0a0a"
+                                : "rgba(255,255,255,0.4)",
+                            borderColor:
+                              selectedFit === fit ? "#ffffff" : "#333",
                             fontWeight: 700,
                           }}
                         >
@@ -231,38 +324,57 @@ export default function Shop() {
                     </div>
                   </div>
 
-                  {/* Category Filter */}
                   <div className="mb-8 pb-8 border-b border-[#1a1a1a]">
-                    <h4 className="text-white/60 text-xs tracking-widest uppercase mb-4" style={{ fontWeight: 600 }}>Category</h4>
+                    <h4
+                      className="text-white/60 text-xs tracking-widest uppercase mb-4"
+                      style={{ fontWeight: 600 }}
+                    >
+                      Category
+                    </h4>
                     {categoryFilters.map((cat) => (
                       <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
                         className="flex items-center justify-between w-full py-2 text-xs tracking-widest transition-colors"
                         style={{
-                          color: selectedCategory === cat ? "#ffffff" : "rgba(255,255,255,0.4)",
+                          color:
+                            selectedCategory === cat
+                              ? "#ffffff"
+                              : "rgba(255,255,255,0.4)",
                           fontWeight: selectedCategory === cat ? 700 : 500,
                         }}
                       >
                         {cat.toUpperCase()}
                         {selectedCategory === cat && (
-                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#e31837" }} />
+                          <span
+                            className="w-1.5 h-1.5 rounded-full"
+                            style={{ backgroundColor: "#e31837" }}
+                          />
                         )}
                       </button>
                     ))}
                   </div>
 
-                  {/* Price Filter */}
                   <div className="mb-8">
-                    <h4 className="text-white/60 text-xs tracking-widest uppercase mb-4" style={{ fontWeight: 600 }}>Price Range</h4>
+                    <h4
+                      className="text-white/60 text-xs tracking-widest uppercase mb-4"
+                      style={{ fontWeight: 600 }}
+                    >
+                      Price Range
+                    </h4>
                     {priceRanges.map((range) => (
-                      <label key={range} className="flex items-center gap-3 py-2 cursor-pointer">
+                      <label
+                        key={range}
+                        className="flex items-center gap-3 py-2 cursor-pointer"
+                      >
                         <input
                           type="checkbox"
                           checked={selectedPrices.includes(range)}
                           onChange={() => {
                             setSelectedPrices((prev) =>
-                              prev.includes(range) ? prev.filter((r) => r !== range) : [...prev, range]
+                              prev.includes(range)
+                                ? prev.filter((r) => r !== range)
+                                : [...prev, range],
                             );
                           }}
                           className="w-4 h-4 border-2 border-[#333] bg-transparent"
@@ -271,7 +383,9 @@ export default function Shop() {
                         <span
                           className="text-xs tracking-widest"
                           style={{
-                            color: selectedPrices.includes(range) ? "#fff" : "rgba(255,255,255,0.4)",
+                            color: selectedPrices.includes(range)
+                              ? "#fff"
+                              : "rgba(255,255,255,0.4)",
                             fontWeight: 600,
                           }}
                         >
@@ -304,21 +418,17 @@ export default function Shop() {
           <div className="flex-1">
             {filtered.length === 0 ? (
               <div className="text-center py-24">
-                <p className="text-white/30 text-sm tracking-widest">No products match your filters.</p>
+                <p className="text-white/30 text-sm tracking-widest">
+                  No products match your filters.
+                </p>
               </div>
             ) : (
               <div
-                className={`grid gap-6 ${
-                  viewMode === "grid"
-                    ? filterOpen
-                      ? "grid-cols-2 lg:grid-cols-3"
-                      : "grid-cols-2 lg:grid-cols-4"
-                    : "grid-cols-1"
-                }`}
+                className={`grid gap-6 ${viewMode === "grid" ? (filterOpen ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 lg:grid-cols-4") : "grid-cols-1"}`}
               >
                 {filtered.map((product, i) => (
                   <motion.div
-                    key={product.id}
+                    key={product._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.05 }}
@@ -330,25 +440,45 @@ export default function Shop() {
                         className="flex gap-6 p-6 border border-[#1a1a1a] hover:border-[#333] transition-colors"
                         style={{ backgroundColor: "#111" }}
                       >
-                        <div className="w-32 h-40 overflow-hidden shrink-0" style={{ backgroundColor: "#0a0a0a" }}>
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                        <div
+                          className="w-32 h-40 overflow-hidden shrink-0"
+                          style={{ backgroundColor: "#0a0a0a" }}
+                        >
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                          />
                         </div>
                         <div className="flex-1 flex flex-col justify-between py-1">
                           <div>
-                            <p className="text-white/30 text-xs tracking-widest uppercase mb-1" style={{ fontWeight: 600 }}>
+                            <p
+                              className="text-white/30 text-xs tracking-widest uppercase mb-1"
+                              style={{ fontWeight: 600 }}
+                            >
                               {product.fit} FIT
                             </p>
-                            <h3 className="text-white text-base mb-2" style={{ fontWeight: 700 }}>
+                            <h3
+                              className="text-white text-base mb-2"
+                              style={{ fontWeight: 700 }}
+                            >
                               {product.name}
                             </h3>
                             <p className="text-white/40 text-xs leading-relaxed max-w-md">
-                              {product.description.slice(0, 120)}...
+                              {product.description
+                                ? `${product.description.slice(0, 120)}...`
+                                : "Premium denim archive piece."}
                             </p>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-white" style={{ fontWeight: 700 }}>${product.price}</span>
+                            <span
+                              className="text-white"
+                              style={{ fontWeight: 700 }}
+                            >
+                              ${product.price}
+                            </span>
                             <a
-                              href={`/product/${product.id}`}
+                              href={`/product/${product._id}`}
                               className="text-white text-xs tracking-widest px-6 py-2 hover:bg-white/10 transition-colors border border-[#333]"
                               style={{ fontWeight: 700 }}
                             >

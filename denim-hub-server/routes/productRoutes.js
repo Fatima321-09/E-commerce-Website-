@@ -1,0 +1,17 @@
+const express = require("express");
+const router = express.Router();
+const {
+  getProducts,
+  createProduct,
+  deleteProduct,
+} = require("../controllers/productController");
+const { protect, admin } = require("../middleware/authMiddleware");
+
+// Public route to see products
+router.get("/", getProducts);
+
+// Protected route: Only logged-in Admins can add products
+router.post("/", protect, admin, createProduct);
+router.delete("/:id", protect, admin, deleteProduct);
+
+module.exports = router;

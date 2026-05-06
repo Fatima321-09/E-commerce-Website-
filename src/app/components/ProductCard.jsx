@@ -10,6 +10,7 @@ export function ProductCard({ product }) {
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
+  const productId = product._id || product.id;
 
   return (
     <div
@@ -18,7 +19,7 @@ export function ProductCard({ product }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image Container */}
-      <Link to={`/product/${product.id}`} className="block relative overflow-hidden">
+      <Link to={`/product/${productId}`} className="block relative overflow-hidden">
         <div className="relative aspect-[3/4] overflow-hidden" style={{ backgroundColor: "#111" }}>
           <img
             src={product.image}
@@ -75,7 +76,7 @@ export function ProductCard({ product }) {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                navigate(`/product/${product.id}`);
+                navigate(`/product/${productId}`);
               }}
               className="w-9 h-9 flex items-center justify-center transition-colors"
               style={{ backgroundColor: "#111", border: "1px solid #333" }}
@@ -94,7 +95,7 @@ export function ProductCard({ product }) {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                navigate(`/product/${product.id}`);
+                navigate(`/product/${productId}`);
               }}
               className="text-white text-xs tracking-widest hover:text-white/70 transition-colors"
               style={{ fontWeight: 700 }}
@@ -115,7 +116,7 @@ export function ProductCard({ product }) {
             >
               {product.fit} FIT
             </p>
-            <Link to={`/product/${product.id}`}>
+            <Link to={`/product/${productId}`}>
               <h3
                 className="text-white text-sm tracking-wide hover:text-white/70 transition-colors"
                 style={{ fontWeight: 700 }}
